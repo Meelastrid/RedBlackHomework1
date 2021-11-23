@@ -1,17 +1,46 @@
 #include <iostream>
 #include <string>
 #include <stdio.h>
-#include <vector>
 #include <fstream>
 #include <sstream>
 #include <stdlib.h>
 
 using namespace std;
-struct MyNode
+
+enum Colors {
+	RED,
+	BLACK
+};
+
+struct TempNode {
+	string sign;
+	string key;
+	unsigned long long value;
+};
+
+typedef struct MyNode
 {
+	Colors color;
     string key;
     unsigned long long value;
-};
+	struct MyNode *parent;
+	struct MyNode *right;
+	struct MyNode *left;
+
+	MyNode(Colors color, string key, unsigned long long value, struct MyNode *parent, struct MyNode *right, struct
+			MyNode *left) {
+		this->color = color;
+		this->key = key;
+		this->value = value;
+		this->parent = parent;
+		this->right = right;
+		this->left = left;
+	}
+} Node;
+
+Node *leaf;
+leaf = new Node(RED, 0, 0, 0, leaf, leaf);
+Node *root = leaf;
 
 void handleError(string errorMsg) {
 	cerr << errorMsg << endl;
@@ -70,27 +99,27 @@ void parseString(string &str, string &sign, MyNode &tempNode, unsigned int numbe
 	tempNode.value = atoi(tempValue.c_str());
 }
 
-void insertElement(std::vector<MyNode> &dictionary, MyNode tempNode) {
+void insertElement(MyNode tempNode) {
     std::cout << "insertion operation:" << endl << "key: " << tempNode.key << std::endl << "value: " << tempNode.value << endl << endl;
 }
 
-void deleteElement(std::vector<MyNode> &dictionary, MyNode tempNode) {
+void deleteElement(MyNode tempNode) {
     std::cout << "deletion operation:" << endl << "key: " << tempNode.key << std::endl << "value: " << tempNode.value << endl << endl;
 }
 
-bool searchElement(std::vector<MyNode> dictionary, MyNode tempNode) {
+bool searchElement(MyNode tempNode) {
     std::cout << "searching operation:" << endl << "key: " << tempNode.key << std::endl << "value: " << tempNode.value << endl << endl;
     return true;
 }
 
 int main() {
     unsigned int numberOfWords;
-    MyNode tempNode;
     string sign;
     string str;
+	TempNode tempNode;
     std::ifstream file("bcinput.txt");
 
-    std::vector<MyNode> dictionary;
+	cout << "addres of NIL is: " << endl;
 
     while (std::getline(file, str)) {
         if (str[0] == '\0')
@@ -102,11 +131,11 @@ int main() {
         keyValidation(tempNode.key);
 
         if (numberOfWords == 3 && sign[0] == '+')
-            insertElement(dictionary, tempNode);
+            insertElement(tempNode);
         else if (numberOfWords == 2 && sign[0] == '-')
-            deleteElement(dictionary, tempNode);
+            deleteElement(tempNode);
         else if (numberOfWords == 1)
-            searchElement(dictionary, tempNode);
+            searchElement(tempNode);
         else
             handleError("Unexpected error!!!");
     }
