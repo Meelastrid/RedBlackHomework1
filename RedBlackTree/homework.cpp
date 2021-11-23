@@ -119,8 +119,6 @@ int main() {
 	TempNode tempNode;
     std::ifstream file("bcinput.txt");
 
-	cout << "addres of NIL is: " << endl;
-
     while (std::getline(file, str)) {
         if (str[0] == '\0')
             break;
