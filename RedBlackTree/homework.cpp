@@ -26,23 +26,20 @@ typedef struct MyNode
 	struct MyNode *parent;
 	struct MyNode *right;
 	struct MyNode *left;
-
-	MyNode(Colors color, string key, unsigned long long value, struct MyNode *parent, struct MyNode *right, struct
-			MyNode *left) {
-		this->color = color;
-		this->key = key;
-		this->value = value;
-		this->parent = parent;
-		this->right = right;
-		this->left = left;
-	}
 } Node;
 
-Node *leaf;
-leaf = new Node(RED, 0, 0, 0, leaf, leaf);
-Node *root = leaf;
+
+Node leaf; 0x55ddll
+Node root;
+Node *node = new Node(RED, 0, 0, &root, leaf, leaf);
+
+
 
 void handleError(string errorMsg) {
+
+	root.left = &leaf;
+	root.right = &leaf;
+
 	cerr << errorMsg << endl;
 	exit(1);
 }
