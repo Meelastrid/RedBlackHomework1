@@ -37,7 +37,8 @@ private:
 
 	NodePtr searchTreeHelper(NodePtr node, string key) {
 		if (node == TNULL) {
-			cout << "NoSuchWord" << endl;
+			if (key.compare("a") == 0)
+				cout << "NoSuchWord" << endl;
 			return node;
 		} else if (key.compare(node->data) == 0) {
 			cout << "OK: " << node->value << endl;
@@ -52,7 +53,6 @@ private:
 
 	NodePtr checkBeforeInsert(NodePtr node, string key) {
 		if (node == TNULL) {
-			cout << "OK" << endl;
 			return node;
 		} else if (key.compare(node->data) == 0) {
 			cout << "Exist" << endl;
@@ -155,7 +155,7 @@ private:
 			cout << "NoSuchWord" << endl;
 			return;
 		}
-
+		cout << "OK" << endl;
 		y = z;
 		int y_original_color = y->color;
 		if (z->left == TNULL) {
@@ -185,7 +185,6 @@ private:
 		if (y_original_color == 0) {
 			deleteFix(x);
 		}
-		cout << "OK" << endl;
 	}
 
 	void insertFix(NodePtr k) {
@@ -241,12 +240,8 @@ public:
 		root = TNULL;
 	}
 
-	NodePtr searchTree(string k, int flag) {
-		if (flag == 0)
-			return searchTreeHelper(this->root, k);
-		else
-			return checkBeforeInsert(this->root, k);
-
+	NodePtr searchTree(string k) {
+		return searchTreeHelper(this->root, k);
 	}
 
 	NodePtr minimum(NodePtr node) {
@@ -293,10 +288,10 @@ public:
 	}
 
 	void insert(string key, unsigned long long value) {
-
-		if (searchTree(key, 1) != TNULL) {
+		if (checkBeforeInsert(this->root, key) != TNULL) {
 			return;
 		}
+		cout << "OK" << endl;
 
 		NodePtr node = new Node;
 		node->parent = nullptr;
@@ -337,7 +332,6 @@ public:
 		}
 
 		insertFix(node);
-		cout << "OK" << endl;
 	}
 
 	NodePtr getRoot() {
@@ -414,27 +408,34 @@ int main() {
     unsigned int numberOfWords;
     string sign;
     string str;
-    std::ifstream file("bcinput.txt");
+    std::ifstream file("input.txt");
 	struct TempNode tempNode;
 	RedBlackTree bst;
+	int count = 0;
 
-    while (std::getline(file, str)) {
-        if (str[0] == '\0')
-            break;
-        numberOfWords = total_words(str);
-        if (numberOfWords > 3 || numberOfWords == 0)
-            handleError("Wrong number of arguments");
-        parseString(str, sign, tempNode, numberOfWords);
-        keyValidation(tempNode.key);
+	while (std::getline(file, str)) {
+		if (str[0] == '\0') {
+			break;
+		}
+		numberOfWords = total_words(str);
+		if (numberOfWords > 3 || numberOfWords == 0) {
+			handleError("Wrong number of arguments");
+		}
+		parseString(str, sign, tempNode, numberOfWords);
+		keyValidation(tempNode.key);
 
-        if (numberOfWords == 3 && sign[0] == '+')
-            bst.insert(tempNode.key, tempNode.value);
-        else if (numberOfWords == 2 && sign[0] == '-')
+		if (numberOfWords == 3 && sign[0] == '+') {
+			bst.insert(tempNode.key, tempNode.value);
+		}
+        else if (numberOfWords == 2 && sign[0] == '-') {
 			bst.deleteNode(tempNode.key);
-        else if (numberOfWords == 1)
-            bst.searchTree(tempNode.key, 0);
-        else
-            handleError("Unexpected error!!!");
-    }
+		}
+        else if (numberOfWords == 1) {
+			bst.searchTree(tempNode.key);
+		}
+        else {
+			handleError("Unexpected error!!!");
+		}
+	}
     return 0;
 }
