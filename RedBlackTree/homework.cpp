@@ -32,13 +32,14 @@ private:
 
 	void initializeNULLNode(NodePtr node, NodePtr parent) {
 		node->data = "";
+		node->value = 0;
 		node->parent = parent;
 		node->left = nullptr;
 		node->right = nullptr;
 		node->color = 0;
 	}
 
-	NodePtr searchTreeHelper(NodePtr node, string key, vector<string> allKeys) {
+	NodePtr searchTreeHelper(NodePtr node, string key) {
 		if (node == TNULL) {
 			cout << "NoSuchWord" << endl;
 			return node;
@@ -48,14 +49,13 @@ private:
 		}
 
 		if (key.compare(node->data) < 0) {
-			return searchTreeHelper(node->left, key, allKeys);
+			return searchTreeHelper(node->left, key);
 		}
-		return searchTreeHelper(node->right, key, allKeys);
+		return searchTreeHelper(node->right, key);
 	}
 
 	NodePtr checkBeforeInsert(NodePtr node, string key) {
 		if (node == TNULL) {
-			cout << "OK" << endl;
 			return node;
 		} else if (key.compare(node->data) == 0) {
 			cout << "Exist" << endl;
@@ -105,7 +105,6 @@ private:
 					rightRotate(x->parent);
 					s = x->parent->left;
 				}
-
 				if (s->right->color == 0) {
 					s->color = 1;
 					x = x->parent;
@@ -159,7 +158,6 @@ private:
 			return;
 		}
 		cout << "OK" << endl;
-		allKeys.push_back(key);
 		y = z;
 		int y_original_color = y->color;
 		if (z->left == TNULL) {
@@ -244,8 +242,8 @@ public:
 		root = TNULL;
 	}
 
-	NodePtr searchTree(string k, vector<string> allKeys) {
-		return searchTreeHelper(this->root, k, allKeys);
+	NodePtr searchTree(string k) {
+		return searchTreeHelper(this->root, k);
 	}
 
 	NodePtr minimum(NodePtr node) {
@@ -323,7 +321,7 @@ public:
 		} else {
 			y->right = node;
 		}
-
+		cout << "OK" << endl;
 		if (node->parent == nullptr) {
 			node->color = 0;
 			return;
@@ -377,10 +375,10 @@ void keyValidation(string key) {
 			handleError("Wrong key format. Keys can consist only from English letters");
 }
 
-void parseString(string &str, string &sign, TempNode &tempNode, unsigned int numberOfWords) {
+void parseString(string &str, string &sign, TempNode &tempNode, int numberOfWords) {
 	string tempValue;
 
-	for (int i = 0; i < (int)str.length(); ++i) {
+	for (int i = 0; i < str.length(); ++i) {
 		str[i] = std::tolower(str[i]);
 	}
 
@@ -403,11 +401,13 @@ void parseString(string &str, string &sign, TempNode &tempNode, unsigned int num
 		stringstream ss(str);
 		ss >> tempNode.key;
 	}
-	tempNode.value = atoi(tempValue.c_str());
+
+	char *endp;
+	tempNode.value = std::strtoull(tempValue.c_str(), &endp, 10);
 }
 
 int main() {
-    unsigned int numberOfWords;
+	int numberOfWords;
     string sign;
     string str;
     std::ifstream file("input.txt");
@@ -430,7 +430,7 @@ int main() {
 			bst.deleteNode(tempNode.key);
 		}
         else if (numberOfWords == 1) {
-			bst.searchTree(tempNode.key, allKeys);
+			bst.searchTree(tempNode.key);
 		}
 	}
 	file.close();
