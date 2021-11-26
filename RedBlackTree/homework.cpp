@@ -40,9 +40,7 @@ private:
 
 	NodePtr searchTreeHelper(NodePtr node, string key, vector<string> allKeys) {
 		if (node == TNULL) {
-			for (string str : allKeys)
-				if (key.compare(str) == 0)
-						cout << "NoSuchWord" << endl;
+			cout << "NoSuchWord" << endl;
 			return node;
 		} else if (key.compare(node->data) == 0) {
 			cout << "OK: " << node->value << endl;
@@ -417,29 +415,24 @@ int main() {
 	RedBlackTree bst;
 
 	while (getline(file, str)) {
-		if (str[0] == '\0') {
-			break;
-		}
-		numberOfWords = total_words(str);
-		cout << numberOfWords << endl;
-//		if (numberOfWords > 3 || numberOfWords == 0) {
-//			handleError("Wrong number of arguments");
-//		}
-//		parseString(str, sign, tempNode, numberOfWords);
-//		keyValidation(tempNode.key);
 
-//		if (numberOfWords == 3 && sign[0] == '+') {
-//			bst.insert(tempNode.key, tempNode.value);
-//		}
-//        else if (numberOfWords == 2 && sign[0] == '-') {
-//			bst.deleteNode(tempNode.key);
-//		}
-//        else if (numberOfWords == 1) {
-//			bst.searchTree(tempNode.key, allKeys);
-//		}
-//        else {
-//			handleError("Unexpected error!!!");
-//		}
+		numberOfWords = total_words(str);
+		if (numberOfWords > 3 || numberOfWords == 0) {
+			handleError("Wrong number of arguments");
+		}
+		parseString(str, sign, tempNode, numberOfWords);
+		keyValidation(tempNode.key);
+
+		if (numberOfWords == 3 && sign.compare("+") == 0) {
+			bst.insert(tempNode.key, tempNode.value);
+		}
+        else if (numberOfWords == 2 && sign.compare("-") == 0) {
+			bst.deleteNode(tempNode.key);
+		}
+        else if (numberOfWords == 1) {
+			bst.searchTree(tempNode.key, allKeys);
+		}
 	}
+	file.close();
     return 0;
 }
