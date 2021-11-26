@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <vector>
 #include <stdlib.h>
 
 using namespace std;
@@ -20,6 +21,8 @@ struct Node {
 	int color;
 };
 
+vector<string> allKeys;
+
 typedef Node *NodePtr;
 
 class RedBlackTree {
@@ -35,10 +38,11 @@ private:
 		node->color = 0;
 	}
 
-	NodePtr searchTreeHelper(NodePtr node, string key) {
+	NodePtr searchTreeHelper(NodePtr node, string key, vector<string> allKeys) {
 		if (node == TNULL) {
-			if (key.compare("a") == 0)
-				cout << "NoSuchWord" << endl;
+			for (string str : allKeys)
+				if (key.compare(str) == 0)
+						cout << "NoSuchWord" << endl;
 			return node;
 		} else if (key.compare(node->data) == 0) {
 			cout << "OK: " << node->value << endl;
@@ -46,13 +50,14 @@ private:
 		}
 
 		if (key.compare(node->data) < 0) {
-			return searchTreeHelper(node->left, key);
+			return searchTreeHelper(node->left, key, allKeys);
 		}
-		return searchTreeHelper(node->right, key);
+		return searchTreeHelper(node->right, key, allKeys);
 	}
 
 	NodePtr checkBeforeInsert(NodePtr node, string key) {
 		if (node == TNULL) {
+			cout << "OK" << endl;
 			return node;
 		} else if (key.compare(node->data) == 0) {
 			cout << "Exist" << endl;
@@ -156,6 +161,7 @@ private:
 			return;
 		}
 		cout << "OK" << endl;
+		allKeys.push_back(key);
 		y = z;
 		int y_original_color = y->color;
 		if (z->left == TNULL) {
@@ -240,8 +246,8 @@ public:
 		root = TNULL;
 	}
 
-	NodePtr searchTree(string k) {
-		return searchTreeHelper(this->root, k);
+	NodePtr searchTree(string k, vector<string> allKeys) {
+		return searchTreeHelper(this->root, k, allKeys);
 	}
 
 	NodePtr minimum(NodePtr node) {
@@ -291,8 +297,6 @@ public:
 		if (checkBeforeInsert(this->root, key) != TNULL) {
 			return;
 		}
-		cout << "OK" << endl;
-
 		NodePtr node = new Node;
 		node->parent = nullptr;
 		node->data = key;
@@ -348,7 +352,7 @@ void handleError(string errorMsg) {
 	exit(1);
 }
 
-int total_words(string &str){
+int total_words(string str){
 	stringstream ss(str);
 	int count = 0;
 	while(!ss.eof())
@@ -411,31 +415,31 @@ int main() {
     std::ifstream file("input.txt");
 	struct TempNode tempNode;
 	RedBlackTree bst;
-	int count = 0;
 
-	while (std::getline(file, str)) {
+	while (getline(file, str)) {
 		if (str[0] == '\0') {
 			break;
 		}
 		numberOfWords = total_words(str);
-		if (numberOfWords > 3 || numberOfWords == 0) {
-			handleError("Wrong number of arguments");
-		}
-		parseString(str, sign, tempNode, numberOfWords);
-		keyValidation(tempNode.key);
+		cout << numberOfWords << endl;
+//		if (numberOfWords > 3 || numberOfWords == 0) {
+//			handleError("Wrong number of arguments");
+//		}
+//		parseString(str, sign, tempNode, numberOfWords);
+//		keyValidation(tempNode.key);
 
-		if (numberOfWords == 3 && sign[0] == '+') {
-			bst.insert(tempNode.key, tempNode.value);
-		}
-        else if (numberOfWords == 2 && sign[0] == '-') {
-			bst.deleteNode(tempNode.key);
-		}
-        else if (numberOfWords == 1) {
-			bst.searchTree(tempNode.key);
-		}
-        else {
-			handleError("Unexpected error!!!");
-		}
+//		if (numberOfWords == 3 && sign[0] == '+') {
+//			bst.insert(tempNode.key, tempNode.value);
+//		}
+//        else if (numberOfWords == 2 && sign[0] == '-') {
+//			bst.deleteNode(tempNode.key);
+//		}
+//        else if (numberOfWords == 1) {
+//			bst.searchTree(tempNode.key, allKeys);
+//		}
+//        else {
+//			handleError("Unexpected error!!!");
+//		}
 	}
     return 0;
 }
