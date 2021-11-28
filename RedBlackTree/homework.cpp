@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <vector>
 #include <stdlib.h>
 
 using namespace std;
@@ -20,8 +19,6 @@ struct Node {
 	Node *right;
 	int color;
 };
-
-vector<string> allKeys;
 
 typedef Node *NodePtr;
 
