@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <iomanip>
 
 using namespace std;
 
@@ -13,7 +14,7 @@ struct	s_node {
 	s_node	*next;
 };
 
-s_node	*ft_lstnew(int key, string value) {
+s_node	*ft_lstnew(unsigned short key, string value) {
 	s_node	*new_elem;
 
 	new_elem = (s_node*)malloc(sizeof(s_node));
@@ -65,37 +66,53 @@ s_node *node_at(s_node *root, int at) {
 	return root;
 }
 
-void countSort(s_node *root) {
-	int size = find_size(root);
-	cout << "Size: " << size << endl;
-	int output[size + 1];
-	int max = find_range(root);
-	cout << "Range: " << max << endl;
-	int count[max + 1];     //create count array (max+1 number of elements)
-
-	for (int i = 0; i <= max; i++)
-		count[i] = 0;     //initialize count array to all zero
-//
-	for (int i = 0; i < size; i++)
-		count[node_at(root, i)->intkey]++;     //increase number count in count array.
-//
-	for (int i = 1; i <= max; i++)
-		count[i] += count[i - 1];     //find cumulative frequency
-//
-	for (int i = size - 1; i >= 0; i--) {
-		output[count[node_at(root, i)->intkey]] = node_at(root, i)->intkey;
-		count[node_at(root, i)->intkey] -= 1; //decrease count for same numbers
+string find_in_root_value_under_n(s_node *root, int key)
+{
+	while (root != nullptr) {
+		if (root->intkey == key) {
+			root->intkey = -1;
+			return root->value;
+		}
+		root = root->next;
 	}
-//
-	for (int i = 1; i <= size; ++i)
-		cout << output[i] << endl;
+	return "nullptr";
 }
 
+void countSort(s_node *root) {
+	int size = find_size(root);
+	int output[size + 1];
+	int max = find_range(root);
+	int count[max + 1];
+
+	for (int i = 0; i <= max; i++)
+		count[i] = 0;
+	for (int i = 0; i < size; i++)
+		count[node_at(root, i)->intkey]++;
+	for (int i = 1; i <= max; i++)
+		count[i] += count[i - 1];
+	for (int i = size - 1; i >= 0; i--) {
+		output[count[node_at(root, i)->intkey]] = node_at(root, i)->intkey;
+		count[node_at(root, i)->intkey] -= 1;
+	}
+
+	s_node *result = nullptr;
+	string str;
+	for (int i = 1; i <= size; ++i) {
+		str = find_in_root_value_under_n(root, output[i]);
+		s_node *pnew = ft_lstnew(output[i], str);
+		ft_lstadd_back(&result, pnew);
+	}
+
+
+	for (int i = 0; i < size; ++i)
+		cout << node_at(result, i)->intkey << node_at(result, i)->value << endl;
+
+}
 
 int 	main(void) {
 	string	str;
-	string	key;
-	string	value;
+	string	key = "";
+	string	value = "";
 	ifstream	file("input.txt");
 	s_node	*root = nullptr;
 
@@ -106,20 +123,17 @@ int 	main(void) {
 		// parsing from input line to node's elements
 		stringstream ss(str);
 		ss >> key >> value;
-		int my_key = stoi(key);
-
-		// defining type of the key (post, short etc...) meaning that every line after first will be the same key type
-		if (key.length() == 6)
-			key_type = "post";
-		else if (my_key >= 0 && my_key <= 65535)
-			key_type = "short";
+		unsigned short my_key = stoi(key);
 
 		// adding whatever key type to list
-		if (key.length() == 6 || (my_key >= 0 && my_key <= 65535))
-			ft_lstadd_back(&root, ft_lstnew(my_key, value));
+//		if (key.length() == 6 || (my_key >= 0 && my_key <= 65535))
+		ft_lstadd_back(&root, ft_lstnew(my_key, value));
 	}
 
-	countSort(root);
+
+//	countSort(root);
+
+
 
 	file.close();
 	return 0;
