@@ -40,16 +40,13 @@ void	ft_lstadd_back(s_node** myRoot, s_node* p_new) {
 
 int 	find_range(s_node *root) {
 	int max = root->intkey;
-	int min = root->intkey;
 
 	while (root != nullptr) {
 		if (root->intkey > max)
 			max = root->intkey;
-		if (root->intkey < min)
-			min = root->intkey;
 		root = root->next;
 	}
-	return max - min;
+	return max;
 }
 
 int		find_size(s_node *root) {
@@ -62,30 +59,36 @@ int		find_size(s_node *root) {
 	return i;
 }
 
+s_node *node_at(s_node *root, int at) {
+	for (int i = 0; i < at; ++i)
+		root = root->next;
+	return root;
+}
 
-void	countingSort(s_node *root) {
-	int numberRange = find_range(root);
-	int arraySize = find_size(root);
+void countSort(s_node *root) {
+	int size = find_size(root);
+	cout << "Size: " << size << endl;
+	int output[size + 1];
+	int max = find_range(root);
+	cout << "Range: " << max << endl;
+	int count[max + 1];     //create count array (max+1 number of elements)
 
-	cout << "Range: " << numberRange << endl;
-	cout << "Size: " << arraySize << endl;
-
-//	int newArray[numberRange];
+	for (int i = 0; i <= max; i++)
+		count[i] = 0;     //initialize count array to all zero
 //
-//	for(int i = 0; i != arraySize; ++i)
-//		++newArray[initialArray[i]];
+	for (int i = 0; i < size; i++)
+		count[node_at(root, i)->intkey]++;     //increase number count in count array.
 //
-//	for(int i = 1; i != numberRange; ++i)
-//		newArray[i] = newArray[i] + newArray[i - 1];
+	for (int i = 1; i <= max; i++)
+		count[i] += count[i - 1];     //find cumulative frequency
 //
-//	int temp;
-//	int temp1;
-//	for(int i = 0; i != arraySize; ++i)
-//	{
-//		temp = initialArray[i];
-//		temp1 = newArray[temp]--;
-//		ar->arr[temp1 - 1] = initialArray[i];
-//	}
+	for (int i = size - 1; i >= 0; i--) {
+		output[count[node_at(root, i)->intkey]] = node_at(root, i)->intkey;
+		count[node_at(root, i)->intkey] -= 1; //decrease count for same numbers
+	}
+//
+	for (int i = 1; i <= size; ++i)
+		cout << output[i] << endl;
 }
 
 
@@ -105,7 +108,7 @@ int 	main(void) {
 		ss >> key >> value;
 		int my_key = stoi(key);
 
-		// defining type of the key (post, short ...) meaning that every line after first will be the same key type
+		// defining type of the key (post, short etc...) meaning that every line after first will be the same key type
 		if (key.length() == 6)
 			key_type = "post";
 		else if (my_key >= 0 && my_key <= 65535)
@@ -116,14 +119,7 @@ int 	main(void) {
 			ft_lstadd_back(&root, ft_lstnew(my_key, value));
 	}
 
-	//sorting list in ascending order (from 0 to n)
-	countingSort(root);
-
-	// printing all elements
-	while (root != nullptr) {
-		cout << root->intkey << " : " << root->value << endl;
-		root = root->next;
-	}
+	countSort(root);
 
 	file.close();
 	return 0;
